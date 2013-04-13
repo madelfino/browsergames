@@ -1,13 +1,15 @@
+var DEBUG = false;
 var ctx;
 var player = {
-    'x': 0,
-    'y': 0,
+    'x': 100,
+    'y': 100,
     'height': 30,
     'width': 30,
     'kills': 0
 }
 var dots = [];
 var gameInterval;
+var killCounter;
 
 window.onload = function()
 {
@@ -18,13 +20,14 @@ window.onload = function()
         player.y = e.clientY - canvas.offsetTop;
     };
     canvas.style.cursor = "None";
+    killCounter = document.getElementById("killCounter");
     gameInterval = setInterval(run, 30);
-    poop = setInterval(addDot, 200);
+    poop = setInterval(addDot, 100);
 }
 
 function addDot()
 {
-    dots.push(dot(Math.random() * 200, 0));
+    dots.push(dot(1 + Math.random() * 198, 0));
 }
 
 function run(){
@@ -51,14 +54,16 @@ function draw()
                  player.y - player.height / 2,
                  player.width,
                  player.height);
+    killCounter.innerHTML = "Kills: " + player.kills;
 }
 
 function update()
 {
     for (var i=dots.length-1; i>=0; --i){
-        dots[i].y += 0.3;
+        dots[i].y += 0.5;
         if (dots[i].y > 200){
-            alert("you dead");
+            alert("you dead, kills: " + player.kills);
+            debug(dots[i]);
             clearInterval(poop);
             clearInterval(gameInterval);
         }
@@ -67,6 +72,7 @@ function update()
            dots[i].y >= player.y - player.height / 2 &&
            dots[i].y <= player.y + player.height / 2){
             dots.splice(i,1);
+            player.kills++;
         }
     }
 }
@@ -74,4 +80,10 @@ function update()
 function dot(x, y)
 {
     return {'x': x, 'y': y};
+}
+
+function debug(msg)
+{
+    if(DEBUG)
+        console.log(msg);
 }
